@@ -10,7 +10,7 @@
 
 @implementation IDAndDescription
 
-+ (NSDictionary *)WJReplacedKeyFromPropertyName {
++ (NSDictionary *)WJReplacedKeyToNewKey {
     return @{
              @"ID" : @"id",
              @"Description" : @"description"

@@ -22,8 +22,8 @@
 
 + (NSString *)propertyKey:(NSString *)propertyName{
     NSString *key;
-    if ([self respondsToSelector:@selector(WJReplacedKeyFromPropertyName)]) {
-        key = [self WJReplacedKeyFromPropertyName][propertyName];
+    if ([self respondsToSelector:@selector(WJReplacedKeyToNewKey)]) {
+        key = [self WJReplacedKeyToNewKey][propertyName];
     }
     return key?:propertyName;
 }
@@ -41,20 +41,6 @@
         // foundation类型
         if (!type.isFromFoundation && typeClass) {
             value = [typeClass wj_modelWithKeyValues:value];
-        } else if ([self.class respondsToSelector:@selector(WJModelClassInArray)]){ //数组里存放了模型的特殊处理，即实现了这个方法
-            id objectClass;
-            // WJModelClassInArray实际上是一个字典
-            objectClass = [self.class WJModelClassInArray][property.name];
-            // 如果是NSString类型
-            if ([objectClass isKindOfClass:[NSString class]]) {
-                objectClass = NSClassFromString(objectClass);
-            }
-            
-            if (objectClass) {
-                // 返回一个装了模型的数组
-                value = [objectClass WJModelArrayWithKeyValuesArray:value];
-            }
-            
         } else if (type.isNumberType){ // 如果是基本数据类型
             NSString *oldValue = value;
             // 字符串->数字
@@ -69,6 +55,20 @@
                     }
                 }
             }
+        } else if ([self.class respondsToSelector:@selector(WJModelClassInArray)]){ //数组里存放了模型的特殊处理，即实现了这个方法
+            id objectClass;
+            // [self.class WJModelClassInArray]实际上是一个字典
+            objectClass = [self.class WJModelClassInArray][property.name];
+            // 如果是NSString类型
+            if ([objectClass isKindOfClass:[NSString class]]) {
+                objectClass = NSClassFromString(objectClass);
+            }
+            
+            if (objectClass) {
+                // 返回一个装了模型的数组
+                value = [objectClass WJModelArrayWithKeyValuesArray:value];
+            }
+            
         }
         else{
             if (typeClass == [NSString class]) {
@@ -96,7 +96,7 @@
  *
  *  @return 模型数组
  */
-+ (NSMutableArray *)WJModelArrayWithKeyValuesArray:(id)keyValuesArray{
++ (NSMutableArray *)WJModelArrayWithKeyValuesArray:(id)keyValuesArray {
     
     if ([self isClassFromFoundation:self])
         return keyValuesArray;
