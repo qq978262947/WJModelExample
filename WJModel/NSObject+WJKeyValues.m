@@ -20,6 +20,14 @@
     return [[[self alloc] init] setKeyValues:keyValues];
 }
 
++ (NSString *)propertyKey:(NSString *)propertyName{
+    NSString *key;
+    if ([self respondsToSelector:@selector(WJReplacedKeyFromPropertyName)]) {
+        key = [self WJReplacedKeyFromPropertyName][propertyName];
+    }
+    return key?:propertyName;
+}
+
 - (instancetype)setKeyValues:(id)keyValues{
     // 对json格式进行处理
     keyValues = [keyValues JSONObject];
@@ -28,7 +36,7 @@
         WJPropertyType *type = property.type;
         Class typeClass = type.typeClass;
         
-        id value = [keyValues valueForKey:property.name];
+        id value = [keyValues valueForKey:[self.class propertyKey:property.name]];
         if (!value) continue;
         // foundation类型
         if (!type.isFromFoundation && typeClass) {
@@ -37,7 +45,6 @@
             id objectClass;
             // WJModelClassInArray实际上是一个字典
             objectClass = [self.class WJModelClassInArray][property.name];
-            
             // 如果是NSString类型
             if ([objectClass isKindOfClass:[NSString class]]) {
                 objectClass = NSClassFromString(objectClass);

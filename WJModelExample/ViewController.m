@@ -24,7 +24,7 @@
     
 //    [self WJModelDemoJson];
     
-    [self WJModelDemoDict];
+    [self WJModelDemoArrayInDict];
     
 }
 
@@ -92,7 +92,7 @@
 /**
  *  复杂的字典 -> 模型 (模型的数组属性里面又装着模型)
  */
-- (void)keyValues2object3
+- (void)WJModelDemoArrayInDict
 {
     // 1.定义一个字典
     NSDictionary *dict = @{
@@ -130,7 +130,11 @@
                            
                            @"totalNumber" : @"2014",
                            @"previousCursor" : @"13476589",
-                           @"nextCursor" : @"13476599"
+                           @"nextCursor" : @"13476599",
+                           @"IDAndDesc" : @{
+                                            @"id" : @"21124061",
+                                            @"description" : @"哈哈"
+                                        }
                            };
     
     
@@ -141,7 +145,7 @@
     
     
     // 3.打印StatusResult模型的简单属性
-    NSLog(@"totalNumber=%@, previousCursor=%lld, nextCursor=%lld ,IDAndDesc.ID=%@", result.totalNumber, result.previousCursor, result.nextCursor , result);
+    NSLog(@"totalNumber=%@, previousCursor=%lld, nextCursor=%lld ,IDAndDesc.ID=%@", result.totalNumber, result.previousCursor, result.nextCursor , result.IDAndDesc.ID);
     
     // 4.打印statuses数组中的模型属性
     for (Status *status in result.statuses) {
